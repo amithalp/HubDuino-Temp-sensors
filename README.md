@@ -25,6 +25,7 @@ This project reads water and room temperature from two DS18B20 sensors using an 
 | W5500 Module   | GPIO 5 (CS) | SPI wiring required (3.3V)    |
 
 ---
+<img width="1553" height="841" alt="image" src="https://github.com/user-attachments/assets/6f342c79-7b58-42fb-956a-0b3e10103c69" />
 
 ## 💡 Display
 
