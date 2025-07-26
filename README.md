@@ -34,6 +34,8 @@ The OLED displays:
 - Room temperature
 - ESP32 IP address
 - Connection status (`OK` or `FAIL` based on last sync)
+- 
+<img width="223" height="205" alt="image" src="https://github.com/user-attachments/assets/9a7ae034-9d0b-4156-81d3-cbeed6352124" />
 
 ---
 
