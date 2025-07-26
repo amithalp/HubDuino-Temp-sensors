@@ -1,91 +1,80 @@
 # HubDuino Temp Sensors
 
-This project is a wired ESP32-based temperature monitoring system designed for Hubitat integration via HubDuino. It reads two DS18B20 temperature sensors (for pool and machine room), transmits data over Ethernet using a W5500 module, and displays real-time values on an OLED screen.
-
-## 💡 Features
-
-- ESP32 + W5500 Ethernet module for stable LAN communication
-- Two DS18B20 temperature sensors on a shared 1-Wire bus (GPIO32)
-- SSD1315 OLED display showing:
-  - Pool temperature
-  - Machine room temperature
-  - IP address
-  - Connection status (OK / FAIL)
-- Hubitat HubDuino integration using `SmartThingsEthernetW5x00` library
-- Presence detection handled via Hubitat device timeout
+This project reads water and room temperature from two DS18B20 sensors using an ESP32 connected via Ethernet (W5500 module) and sends the data to a Hubitat hub using the HubDuino SmartThings protocol. It also displays temperature and connection status on an OLED screen (SSD1315).
 
 ---
 
-## 🧰 Hardware Used
+## 📦 Components Used
 
-- ESP32 DevKit board
-- ESP32 terminal adapter board (optional)
-- W5500 Ethernet module (powered via 3.3V)
-- 2× DS18B20 waterproof temperature sensors (with pluggable terminal + 4.7kΩ resistor)
-- 0.96" OLED Display (SSD1315 I2C)
-- IP55 electrical enclosure or CI3 case
-- Power supply: 5V via USB (fed from PC or wall adapter)
-
----
-
-## 🔌 Wiring
-
-| Component        | ESP32 Pin | Notes                       |
-|------------------|-----------|-----------------------------|
-| DS18B20 Sensors  | GPIO32    | 1-Wire shared bus           |
-| OLED (SSD1315)   | GPIO21 (SDA) / GPIO22 (SCL) | I2C Bus |
-| W5500 CS         | GPIO5     | SPI CS                      |
-| W5500 Power      | 3.3V      | Not 5V!                     |
-| GND              | GND       | Common ground               |
-
-**Note**: DS18B20 sensors require a 4.7kΩ pull-up resistor on the data line. If your pluggable terminal includes a `472` component, it already has it.
+- ESP32 DevKit v1
+- W5500 Ethernet module (powered by 3.3V)
+- DS18B20 waterproof temperature sensors (x2)
+- 0.96" SSD1315 OLED Display (I²C, 128x64)
+- Terminal adapter board for ESP32
+- 4.7kΩ pull-up resistor on DS18B20 data line (or onboard with terminal)
+- IP55+ enclosure (recommended for humid environments)
 
 ---
 
-## 🔧 Hubitat Setup
+## 📐 Wiring Summary
 
-- Parent device created using `HubDuino Parent Ethernet Beta` driver.
-- Child devices:
-  - `temperature1` → Pool temp
-  - `temperature2` → Machine room temp
-- Presence attribute used for "online/offline" status (based on ESP32 updates).
-
----
-
-## 📟 OLED Display
-
-Display format:
-Pool: 26.5C
-Room: 24.8C
-IP: 10.21.1.160
-Status: OK
-
-
-Status turns to `FAIL` if the ESP32 hasn't sent data for more than 30 seconds.
+| Component       | ESP32 GPIO | Notes                         |
+|----------------|------------|-------------------------------|
+| DS18B20 Sensors| GPIO 32     | Shared data line for both     |
+| OLED Display   | GPIO 21 (SDA), 22 (SCL) | I²C default pins     |
+| W5500 Module   | GPIO 5 (CS) | SPI wiring required (3.3V)    |
 
 ---
 
-## 🛠️ Future Enhancements
+## 💡 Display
 
-- Add enclosure layout image
-- Include 3D model for internal mounting (optional)
-- Display uptime or custom logo on OLED
-- Optional: Add button input for reset or calibration
-
----
-
-## 📸 Project Overview
-
-_Example layout or wiring diagram here_
-<!-- You can add a link to a diagram or upload it to your GitHub repo -->
+The OLED displays:
+- Pool temperature
+- Room temperature
+- ESP32 IP address
+- Connection status (`OK` or `FAIL` based on last sync)
 
 ---
 
-## 📁 File Structure
+## 🧠 Hubitat Integration
 
+### Required HubDuino Drivers
+Install the following drivers from the HubDuino GitHub repository:
+- **Parent Ethernet Device**: `HubDuino Parent Ethernet`
+  
+- **Child Temperature Devices**: using the native Generic Component Temperature Sensor no need to download
+
+You must also install the HubDuino SmartApp:
+- `ST_Anything_EthernetW5500` (or use the HubDuino Service Manager)
+
+### Device Setup
+1. Create a **Parent Ethernet Device** in Hubitat.
+2. Set the device IP address to the one used by the ESP32.
+3. The ESP32 will create two child devices: `temperature1` and `temperature2`.
 
 ---
 
-## 📜 License
+## 🔧 Setup Instructions
 
-MIT License – feel free to adapt and reuse.
+1. Connect all components per the wiring diagram.
+2. Open `HubDuinoTempSensors.ino` in the Arduino IDE.
+3. **Update these lines to match your network:**
+
+```cpp
+IPAddress ip(10, 21, 1, 160);     // ESP32 static IP
+IPAddress hubIP(10, 21, 1, 51);   // Hubitat hub IP
+Connect the ESP32 via USB to your computer and upload the sketch.
+
+After flashing, power the ESP32 through a 3.3V power supply and connect Ethernet.
+
+Check that temperatures appear in Hubitat and on the OLED screen.
+
+🚨 Notes
+The ESP32 does not support OTA updates via Ethernet; updates require USB connection.
+
+The system does not rely on Wi-Fi, making it ideal for shielded/underground environments.
+
+Use an IP55/IP65 case or better if installed in high humidity areas like a pool machine room.
+
+📜 License
+This project is released under the MIT License.
