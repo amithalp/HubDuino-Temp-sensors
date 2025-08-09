@@ -40,20 +40,27 @@ The OLED displays:
 ---
 
 ## 🧠 Hubitat Integration
+Required HubDuino Drivers
+Install the following driver from the HubDuino GitHub repository:
 
-### Required HubDuino Drivers
-Install the following drivers from the HubDuino GitHub repository:
-- **Parent Ethernet Device**: `HubDuino Parent Ethernet`
-  
-- **Child Temperature Devices**: using the native Generic Component Temperature Sensor no need to download
+Parent Ethernet Device: HubDuino Parent Ethernet Beta
+(Raw file: https://raw.githubusercontent.com/DanielOgorchock/ST_Anything/master/HubDuino/Drivers/hubduino-parent-ethernet-beta.groovy)
 
-You must also install the HubDuino SmartApp:
-- `ST_Anything_EthernetW5500` (or use the HubDuino Service Manager)
+For child devices, you can use Hubitat's built-in Generic Component Temperature Sensor driver — no extra driver install needed.
 
-### Device Setup
-1. Create a **Parent Ethernet Device** in Hubitat.
-2. Set the device IP address to the one used by the ESP32.
-3. The ESP32 will create two child devices: `temperature1` and `temperature2`.
+Device Setup
+Install the Parent Ethernet Beta driver in Hubitat.
+
+Create a new Virtual Device in Hubitat using that driver.
+
+In Preferences:
+
+Set Arduino IP Address = ESP32’s static IP.
+
+Set Arduino Port = 8090.
+
+Click Save Preferences and then Refresh.
+The ESP32 will create two child devices: temperature1 and temperature2.
 
 ---
 
